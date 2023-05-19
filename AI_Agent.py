@@ -60,3 +60,42 @@ class AI_agent:
 
     def is_terminal_node(self, board):
         return (self.is_winner(board, AGENT) or self.is_winner(board, COMPUTER) or len(self.get_valid_moves(board)) == 0)
+
+    # function to get the best move using Minimax algorithm
+    def minimax(self, board, depth, isMaximizing):
+        valid_locations = self.get_valid_moves(board)
+        is_terminal = self.is_terminal_node(board)
+        if depth == 0 or is_terminal:
+            if is_terminal:
+                if self.is_winner(board, AGENT):
+                    return (None, 100000000000000)
+                elif self.is_winner(board, COMPUTER):
+                    return (None, -10000000000000)
+                else:  # Game is over, no more valid moves
+                    return (None, 0)
+            else:  # Depth is zero
+                return (None, self.score_position(board, AGENT))
+
+        if isMaximizing:
+            value = -math.inf
+            column = random.choice(valid_locations)
+            for col in valid_locations:
+                board_copy = deepcopy(board)
+                self.make_move(board_copy, col, AGENT)
+                new_score = self.minimax(board_copy, depth - 1, False)[1]
+                if new_score > value:
+                    value = new_score
+                    column = col
+            return column, value
+
+        else:  # Minimizing player
+            value = math.inf
+            column = random.choice(valid_locations)
+            for col in valid_locations:
+                board_copy = deepcopy(board)
+                self.make_move(board_copy, col, COMPUTER)
+                new_score = self.minimax(board_copy, depth - 1, True)[1]
+                if new_score < value:
+                    value = new_score
+                    column = col
+            return column, value
