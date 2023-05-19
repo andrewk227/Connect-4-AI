@@ -22,7 +22,7 @@ def main():
         # FOR DEBUG PURPOSES
         board.print_grid(game_board)
         print("-------------------------------------------------------------------------------")
-        col, score = ai_agent.minimax(game_board, 4, True)
+        col, score = alphaBeta(game_board, 6, -math.inf, math.inf, True)
         # if mohsen:
         #     col = random.randint(0, 6)
         #     mohsen =False

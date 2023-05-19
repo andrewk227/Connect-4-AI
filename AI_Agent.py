@@ -3,6 +3,8 @@ import sys
 import math
 import time
 import random
+from copy import deepcopy
+from board import Board as br
 
 # define the player
 AGENT = 1
@@ -98,4 +100,49 @@ class AI_agent:
                 if new_score < value:
                     value = new_score
                     column = col
+            return column, value
+
+    # function to get the best move using Minimax algorithm and alpha-beta pruning
+    def alphaBeta(self, board, depth, alpha, beta, isMaximizing):
+        valid_locations = self.get_valid_moves(board)
+        is_terminal = self.is_terminal_node(board)
+        if depth == 0 or is_terminal:
+            if is_terminal:
+                if self.is_winner(board, AGENT):
+                    return (None, 100000000000000)
+                elif self.is_winner(board, COMPUTER):
+                    return (None, -10000000000000)
+                else:  # Game is over, no more valid moves
+                    return (None, 0)
+            else:  # Depth is zero
+                return (None, self.score_position(board, AGENT))
+            
+        if isMaximizing:
+            value = -math.inf
+            column = random.choice(valid_locations)
+            for col in valid_locations:
+                board_copy = deepcopy(board)
+                self.make_move(board_copy, col, AGENT)
+                new_score = self.alphaBeta(board_copy, depth - 1, alpha, beta, False)[1]
+                if new_score > value:
+                    value = new_score
+                    column = col
+                alpha = max(alpha, value)
+                if alpha >= beta:
+                    break
+            return column, value
+
+        else:  # Minimizing player
+            value = math.inf
+            column = random.choice(valid_locations)
+            for col in valid_locations:
+                board_copy = deepcopy(board)
+                self.make_move(board_copy, col, COMPUTER)
+                new_score = self.alphaBeta(board_copy, depth - 1, alpha, beta, True)[1]
+                if new_score < value:
+                    value = new_score
+                    column = col
+                beta = min(beta, value)
+                if alpha >= beta:
+                    break
             return column, value
