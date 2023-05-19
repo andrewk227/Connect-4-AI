@@ -31,7 +31,62 @@ class AI_agent:
             if board[r][col] == 0:
                 board[r][col] = player
                 return
+            
+    # function to get the move evaluation
+    def evaluate_window(self, window, player):
+        score = 0
+        opponent = COMPUTER if player == AGENT else AGENT
+        if window.count(player) == 4:
+            score += 100
+        elif window.count(player) == 3 and window.count(EMPTY) == 1:
+            score += 5
+        elif window.count(player) == 2 and window.count(EMPTY) == 2:
+            score += 2
+        elif window.count(opponent) == 3 and window.count(EMPTY) == 1:
+            score -= 4
 
+        return score
+
+    def score_position(self, board, player):
+        score = 0
+        # Score center column
+        center_array = []
+        for row in board:
+            for i in row:
+                if  len(row) > 3:
+                    center_array.append(int(row[3]))
+        center_count = center_array.count(player)
+        score += center_count * 3
+
+        ## Score Horizontal
+        for row in range(6):
+            row_array = []
+            for col in range(7):
+              for i in range(4):
+                  window = row_array[i:i + 4]
+                  score += self.evaluate_window(window, player)
+
+        # Score Vertical
+        for col in range(7):
+            col_array = []
+            for row in range(6):
+                col_array.append(int(board[row][col]))
+            for i in range(3, 6):
+                window = col_array[i:i - 4:-1]  # Reverse the window to start from the bottom
+                score += self.evaluate_window(window, player)
+
+        ## Score posiive sloped diagonal
+        for row in range(3):
+            for col in range(4):
+                window = [board[row + i][col + i] for i in range(4)]
+                score += self.evaluate_window(window, player)
+
+        for row in range(3):
+            for col in range(4):
+                window = [board[row + 3 - i][col + i] for i in range(4)]
+                score += self.evaluate_window(window, player)
+
+        return score
     
     def is_winner(self, board, player):
         # check rows
