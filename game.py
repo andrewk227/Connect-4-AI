@@ -18,6 +18,8 @@ def main():
         board.print_grid(game_board)
 
         # YOUR CODE GOES HERE
+        #yala binaaaa
+        #def minimax()
 
         # Insert here the action you want to perform based on the output of the algorithm
         # You can use the following function to select a column
