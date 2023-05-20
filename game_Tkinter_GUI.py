@@ -9,8 +9,14 @@ board = Board()
 ai_agent = AI_agent()
 
 def start_game():
+    #To measure the execution time per move
+    counter = 0
+    starttime = time.time()
+
+    #To get the input from GUI
     algo = algorithm_var.get()
     level = difficulty_var.get()
+
     time.sleep(2)
     score = 0
     game_end = False
@@ -21,9 +27,10 @@ def start_game():
             if level == "Easy":
                 col, score = ai_agent.minimax(game_board, 2, True)
             elif level == "Medium":
-                col, score = ai_agent.minimax(game_board, 3, True)
-            elif level == "Hard":
                 col, score = ai_agent.minimax(game_board, 4, True)
+            elif level == "Hard":
+                col, score = ai_agent.minimax(game_board, 6, True)
+                
 
         elif algo == "Alpha-Beta Pruning":
             if level == "Easy":
@@ -32,14 +39,20 @@ def start_game():
                 col, score = ai_agent.alphaBeta(game_board, 4, -math.inf, math.inf, True)
             elif level == "Hard":
                 col, score = ai_agent.alphaBeta(game_board, 6, -math.inf, math.inf, True)
+        
         board.select_column(col)
+        counter += 1
         print (game_end)
         print("Col: ", col, " score: ", score)
         time.sleep(2)
         print("-------------------------------------------------------------------------------")
         board.print_grid(game_board)
+
+    endtime = time.time() 
+    time_taken = endtime - starttime
+    print(time_taken/counter)
     
-    print("hamok4a")
+    
 
 root = tk.Tk()
 root.geometry("400x230")
